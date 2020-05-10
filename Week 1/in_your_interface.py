@@ -29,5 +29,12 @@ def main():
     # Test for __iter__ method
     for name in classmates:
         print(name)
-
+    
+    # Test for __len__ method
+    try:
+        print(classmates.__len__())
+    except:
+        print("method not in implemented")
+        
 main()
+
