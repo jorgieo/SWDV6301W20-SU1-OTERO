@@ -13,15 +13,21 @@ class Teams:
         return False
     
     def __iter__(self):
-        return self
+        return iter(self.__myTeam)
 
     def __next__(self):
-        
+        return next(self.__myTeam)
 
 def main():
     classmates = Teams(['John', 'Steve', 'Tim'])
     print(len(classmates))
-    print('Tim' in classmates) # Test __contains__
-    print('Bob' in classmates) # Test __contains__
+    
+    # Tests for __contains__ method
+    print('Tim' in classmates) 
+    print('Sam' in classmates)
+    
+    # Test for __iter__ method
+    for name in classmates:
+        print(name)
 
 main()
