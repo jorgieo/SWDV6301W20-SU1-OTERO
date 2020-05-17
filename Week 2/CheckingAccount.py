@@ -19,7 +19,6 @@ class CheckingAccount:
         self.address = {}
         self.accountNum = self._generateAccountnum()
         self._balance = initialbalance
-        self._overdrawnflag = False
         self._ledger = []
 
     def _generateAccountnum(self):
@@ -30,10 +29,8 @@ class CheckingAccount:
 
     def _is_overdrawn(self, amount):
         if self.getBanlance() - amount < 0:
-            self._overdrawnflag = True
             return True
         else:
-            self._overdrawnflag = False
             return False
 
     def _updateLedger(self, transactype, amount, status, balance):
