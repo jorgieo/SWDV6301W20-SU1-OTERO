@@ -1,5 +1,5 @@
 import random
-import time
+from datetime import datetime
 
 class CheckingAccount:
     """
@@ -20,6 +20,7 @@ class CheckingAccount:
         self.accountNum = self._generateAccountnum()
         self._balance = initialbalance
         self._overdrawnflag = False
+        self._ledger = []
 
     def _generateAccountnum(self):
         stringAccNo = ''
@@ -27,23 +28,33 @@ class CheckingAccount:
             stringAccNo += str(random.randint(0, 9))
         return stringAccNo
 
-    def _is_overdrawn(self):
-        if self.getBanlance() < 0:
+    def _is_overdrawn(self, amount):
+        if self.getBanlance() - amount < 0:
             self._overdrawnflag = True
             return True
         else:
             self._overdrawnflag = False
             return False
 
+    def _updateLedger(self, transactype, amount, status, balance):
+        timestamp = datetime.now().strftime("%m/%d/%Y--%H:%M:%S")
+        transaction = (timestamp, transactype, amount, status, balance)
+        self._ledger.append(transaction)
+
     def deposit(self, amount):
         self._balance += amount
+        self._updateLedger("DEPOSIT", amount, "SUCCESS", self.getBanlance())
 
     def withdraw(self, amount):
-        if self._is_overdrawn():
-            print("Declined: Insufficient Funds")
+        if self._is_overdrawn(amount):
+            print(f"Debit ${amount} declined: Insufficient Funds.")
+            self._updateLedger("DEBIT", amount, "FAILED", self.getBanlance())
         else:
             self._balance -= amount
+            self._updateLedger("DEBIT", amount, "SUCCESS", self.getBanlance())
 
+    def getName(self):
+        return self.uname
 
     def getBanlance(self):
         return self._balance
@@ -56,6 +67,9 @@ class CheckingAccount:
 
     def getAccountnum(self):
         return self.accountNum
+
+    def getLedger(self):
+        return self._ledger
 
 
 if __name__ == '__main__':
@@ -71,17 +85,38 @@ if __name__ == '__main__':
         print("Customer Address:")
         print(f"{custAddress['street']}\n{custAddress['city']}, {custAddress['state']} {custAddress['zipcode']}")
 
+    def printLedger(object):
+        ledger = object.getLedger()
+        print("Account Ledger:")
+        print(f"{'Timestamp':24}{'Type':12}Amount\tStatus\tBalance")
+        for transaction in ledger:
+            print(f"{transaction[0]}\t{transaction[1]}\t\t{transaction[2]:.2f}\t{transaction[3]}\t{transaction[4]:.2f}")
+
     # Instance of Checking Account
     myChecking = CheckingAccount("John Smith")
     myChecking.setAddress(street="123 Main St", city="Springfield", state="FR", zipcode="99999")
 
     # Print basic account information
+    print("Basic Account Information:")
+    print(f"Account Owner: {myChecking.getName()}")
     printAccountno(myChecking)
     printAddrLabel(myChecking)
     printBalance(myChecking)
+    print()
 
     # Make transaction
+
     myChecking.deposit(525.50)
     printBalance(myChecking)
     myChecking.withdraw(35.25)
     printBalance(myChecking)
+    myChecking.withdraw(650.75)
+    printBalance(myChecking)
+    myChecking.deposit(2000)
+    printBalance(myChecking)
+    myChecking.withdraw(3500.00)
+    printBalance(myChecking)
+    print()
+
+    # Print the account ledger
+    printLedger(myChecking)
