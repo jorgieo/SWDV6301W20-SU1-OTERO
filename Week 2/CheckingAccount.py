@@ -74,6 +74,9 @@ class CheckingAccount:
 
 if __name__ == '__main__':
     # Driver program functions:
+    def printAccountowner(object):
+        print(f"Account Owner: {object.getName()}")
+
     def printAccountno(object):
         print(f"Account Number: {object.getAccountnum()}")
 
@@ -98,7 +101,7 @@ if __name__ == '__main__':
 
     # Print basic account information
     print("Basic Account Information:")
-    print(f"Account Owner: {myChecking.getName()}")
+    printAccountowner(myChecking)
     printAccountno(myChecking)
     printAddrLabel(myChecking)
     printBalance(myChecking)
