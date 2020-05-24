@@ -88,17 +88,6 @@ class Return(Transaction):
         for item in items:
             self.sale_object.removeItems(item)
 
-# class Pricecheck(Transaction):
-#     """
-#     Price check transaction class.
-#     """
-#     def __init__(self):
-#         super().__init__()
-#         self.setType("PRICE CHECK")
-#
-#     def checkItemPrice(self, item):
-#         pass
-
 class Exchange(Transaction):
 
     def __init__(self, sale_object):
