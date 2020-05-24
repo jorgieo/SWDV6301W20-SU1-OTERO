@@ -1,5 +1,6 @@
 # Point of sale (POS) module
 # By Jorge Otero
+# For SWDV630
 
 from datetime import datetime
 import secrets
@@ -71,6 +72,9 @@ class Sale(Transaction):
     def removeItems(self, item):
         self.description['items'].remove(item)
 
+    def getSoldItems(self):
+        return self.sale_object.getDescription()['items']
+
 class Return(Transaction):
     """
     Return transaction class.
@@ -80,21 +84,49 @@ class Return(Transaction):
         self.setType("RETURN")
         self.sale_object = sale_object
 
-    def getItems(self):
-        return self.sale_object.getDescription()['items']
+    def returnItems(self, items=[]):
+        for item in items:
+            self.sale_object.removeItems(item)
 
-class Pricecheck(Transaction):
-    """
-    Price check transaction class.
-    """
-    def __init__(self):
+# class Pricecheck(Transaction):
+#     """
+#     Price check transaction class.
+#     """
+#     def __init__(self):
+#         super().__init__()
+#         self.setType("PRICE CHECK")
+#
+#     def checkItemPrice(self, item):
+#         pass
+
+class Exchange(Transaction):
+
+    def __init__(self, sale_object):
         super().__init__()
-        self.setType("PRICE CHECK")
+        self.setType("EXCHANGE")
+        self.sale_object = sale_object
+        self.sold_items = sale_object.getSoldItems()
+        self.newSale = Sale()
+
+    def getSoldItems(self):
+        return self.sold_items
+
+    def tradeItems(self, old_items, new_items):
+        for item in old_items:
+            if item in self.sold_items:
+                self.sale_object.removeItems(item)
+            else:
+                print("Item not found! Check the entry and try again.")
+
+        self.newSale.addItems(new_items)
+
+    def getNewSale(self):
+        return self.newSale
 
 
 if __name__ == '__main__':
 
-    DATABASE_PRICES = {"bananas": 0.50,
+    ITEM_DATABASE = {"bananas": 0.50,
                        "apples": 0.88,
                        "oranges": 0.90,
                        "milk": 3.10,
