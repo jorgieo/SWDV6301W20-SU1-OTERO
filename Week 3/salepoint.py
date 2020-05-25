@@ -5,6 +5,20 @@
 from datetime import datetime
 import secrets
 
+ITEM_DATABASE = {'bananas': 0.60,
+                 'apples': 0.90,
+                 'kumquats': 3.50,
+                 'carrots': 1.75,
+                 'grapes': 2.98,
+                 'corn': 1.75}
+
+class Inventory:
+    def __init__(self,inventory):
+        self.inventory = inventory
+
+    def getInventory(self):
+        return self.inventory
+
 class Transaction:
     """
     Super class for all transaction types.
@@ -26,6 +40,7 @@ class Transaction:
                             'id': self.transID,
                             'type': '',
                             'items': []}
+        self.inventory = Inventory(ITEM_DATABASE)
 
     def _generate_ID(self):
         """
@@ -70,10 +85,13 @@ class Sale(Transaction):
             self.description['items'].append(item)
 
     def removeItems(self, item):
-        self.description['items'].remove(item)
+        if item in self.description['items']:
+            self.description['items'].remove(item)
+        else:
+            print(f"Item '{item}' not found!")
 
     def getSoldItems(self):
-        return self.sale_object.getDescription()['items']
+        return self.getDescription()['items']
 
 class Return(Transaction):
     """
@@ -83,10 +101,22 @@ class Return(Transaction):
         super().__init__()
         self.setType("RETURN")
         self.sale_object = sale_object
+        self.returns = []
 
-    def returnItems(self, items=[]):
+    def returnItems(self, *items):
         for item in items:
-            self.sale_object.removeItems(item)
+            if item in self.sale_object.description['items']:
+                self.returns.append(item)
+            else:
+                print(f"Item '{item}' not found! Check the entry and try again.")
+        return self.returns
+
+    def storeCredit(self):
+        credit = 0
+        for item in self.returns:
+            if item in self.inventory.getInventory().keys():
+                credit += self.inventory.getInventory()[item]
+        return credit
 
 class Exchange(Transaction):
 
@@ -105,9 +135,13 @@ class Exchange(Transaction):
             if item in self.sold_items:
                 self.sale_object.removeItems(item)
             else:
-                print("Item not found! Check the entry and try again.")
+                print(f"Item '{item}' not found! Check the entry and try again.")
 
-        self.newSale.addItems(new_items)
+        for item in self.sale_object.description['items']:
+            self.description['items'].append(item)
+        for item in new_items:
+            self.description['items'].append(item)
+
 
     def getNewSale(self):
         return self.newSale
@@ -115,19 +149,45 @@ class Exchange(Transaction):
 
 if __name__ == '__main__':
 
-    ITEM_DATABASE = {"bananas": 0.50,
-                       "apples": 0.88,
-                       "oranges": 0.90,
-                       "milk": 3.10,
-                       }
-
+    # Instance of Sale
     sale1 = Sale()
+
+    print("\nSale object's date and ID:")
     print(sale1.getDate())
     print(sale1.getID())
-    sale1.addItems("bananas", "apples", "milk")
-    print(sale1.getDescription())
-    sale1.removeItems("apples")
+    sale1.addItems('bananas','apples', 'kumquats', 'corn')
+
+    print("\nSale object's oescription:")
     print(sale1.getDescription())
 
-    refund1 = Return(sale1)
-    print(refund1.getItems())
+    print("\nSale object's list of sold items:")
+    print(sale1.getSoldItems())
+    sale1.removeItems('apples')
+
+    print("\nRemoving an item that is not in the list:")
+    sale1.removeItems('eggs')
+
+    print("\nSale object after removing items:")
+    print(sale1.getDescription())
+
+    # Instance of Return
+    return1 = Return(sale1)
+
+    print("\nMessages from return object:")
+    print(return1.returnItems('bananas', 'eggs', 'corn', 'apples'))
+
+    print("\nDescription of return transaction:")
+    print(return1.getDescription())
+
+    print("\nValue of returned items' store credit:")
+    print(return1.storeCredit())
+
+    # Instance of Exchange
+    exchange1 = Exchange(sale1)
+
+    print("\nList of items brought to exchange:")
+    print(exchange1.getSoldItems())
+    exchange1.tradeItems(['apples', 'bananas'], ['grapes', 'carrots'])
+
+    print("\nDescription of exchange transation after items were traded:")
+    print(exchange1.getDescription())
