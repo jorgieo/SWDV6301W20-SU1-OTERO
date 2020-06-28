@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Numeric
 from transaction import Transaction
-from transactionbase import Base
+from base import Base
 
 
 class Exchange(Transaction, Base):

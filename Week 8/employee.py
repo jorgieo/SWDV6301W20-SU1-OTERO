@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Numeric
-from employeebase import Base
+from base import Base
 import secrets
 
 

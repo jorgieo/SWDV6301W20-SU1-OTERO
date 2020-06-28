@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Numeric
-from inventorybase import Base
+from base import Base
 import secrets
 
 
