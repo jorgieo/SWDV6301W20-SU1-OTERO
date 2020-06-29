@@ -13,20 +13,22 @@ class Sale(Transaction, Base):
 
     def addItems(self, *args):
         for item in args:
-            self.description['items'].append(item)
+            self.items.append(item)
+            self.netTotal += item.price
 
     def removeItems(self, item):
-        if item in self.description['items']:
-            self.description['items'].remove(item)
+        if item in self.items:
+            self.items.remove(item)
         else:
             print(f"Item '{item}' not found!")
 
     def getSoldItems(self):
-        return self.getDescription()['items']
+        return self.items
 
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True)
     timestamp = Column(String)
     transID = Column(String)
-    description = Column(String)
+    type = Column(String)
+    netTotal = Column(Numeric)
