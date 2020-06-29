@@ -35,4 +35,5 @@ class Exchange(Transaction, Base):
     id = Column(Integer, primary_key=True)
     timestamp = Column(String)
     transID = Column(String)
-    description = Column(String)
+    type = Column(String)
+    netTotal = Column(Numeric)
