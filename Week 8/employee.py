@@ -28,7 +28,7 @@ class Employee(Base):
         return self.role
 
     def _genID(self):
-        return secrets.token_hex(12)
+        return secrets.token_hex(6)
 
     def getID(self):
         return self.uid

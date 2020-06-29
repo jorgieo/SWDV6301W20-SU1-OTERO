@@ -22,7 +22,7 @@ class Item(Base):
         return self.name
 
     def _genCode(self):
-        return secrets.token_hex(12)
+        return secrets.token_hex(8)
 
     def getCode(self):
         return self.code
