@@ -9,11 +9,11 @@ class Employee(Base):
     def __init__(self, name, role):
         self.name = name
         self.role = role
-        self.id = self._genID()
+        self.uid = self._genID()
         self.keycard = self._genKey()
 
     def __repr__(self):
-        return f"Employee Name: {self.name}\nRole: {self.role}\nid: {self.id}\nKeycard: {self.keycard}"
+        return f"Employee Name: {self.name}\nRole: {self.role}\nid: {self.uid}\nKeycard: {self.keycard}"
 
     def setName(self, name):
         self.name = name
@@ -31,7 +31,7 @@ class Employee(Base):
         return secrets.token_hex(12)
 
     def getID(self):
-        return self.id
+        return self.uid
 
     def _genKey(self):
         return secrets.token_hex(12)
@@ -44,5 +44,5 @@ class Employee(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     role = Column(String)
-    id = Column(String)
+    uid = Column(String)
     keycard = Column(String)
